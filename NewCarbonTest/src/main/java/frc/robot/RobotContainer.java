@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.DriveTrain;
 
@@ -24,6 +25,9 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    Joystick leftJoystick = new Joystick(Constants.leftJoystick);
+    Joystick rightJoystick = new Joystick(Constants.rightJoystick);
+    
   }
 
   /**
