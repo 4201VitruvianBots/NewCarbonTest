@@ -23,8 +23,8 @@ public class DriveTrain extends SubsystemBase {
   
   public DriveTrain() {
 //making rightback follow right front and vice versa
-  driveMotors[2].follow(driveMotors[1]);
-  driveMotors[4].follow(driveMotors[1]);
+  driveMotors[1].follow(driveMotors[0]);
+  driveMotors[3].follow(driveMotors[2]);
 
   DoubleSolenoid shifters = new DoubleSolenoid(Constants.pcm,
   Constants.driveTrainShiftersForward, Constants.driveTrainShiftersReverse);
