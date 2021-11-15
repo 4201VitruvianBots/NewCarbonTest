@@ -4,30 +4,38 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.SetArcadeDrive;
 import frc.robot.subsystems.DriveTrain;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  public static DriveTrain driveTrain = new DriveTrain();
-
-  //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
-
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public static DriveTrain m_driveTrain = new DriveTrain();
+  public static DoubleSupplier m_throttle;
+  public static DoubleSupplier m_turn;
+  // private final m_command = new ExampleCommand(m_exampleSubsystem);
+  //
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
     Joystick leftJoystick = new Joystick(Constants.leftJoystick);
     Joystick rightJoystick = new Joystick(Constants.rightJoystick);
-    
+
+    m_driveTrain.setDefaultCommand(new SetArcadeDrive(m_driveTrain, m_throttle, m_turn));
   }
 
   /**
