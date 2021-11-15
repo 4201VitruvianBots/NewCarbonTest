@@ -34,6 +34,10 @@ public static void SetMotorPercentOutputs(double leftoutput, double rightoutput)
 driveMotors[1].set(ControlMode.PercentOutput, leftoutput);
 driveMotors[4].set(ControlMode.PercentOutput, rightoutput);
 }
+public void setMotorArcadeDrive(double throttle, double turn) {
+  double leftPWM = throttle + turn;
+  double rightPWM = throttle - turn;
+}
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
