@@ -30,13 +30,18 @@ public class DriveTrain extends SubsystemBase {
   Constants.driveTrainShiftersForward, Constants.driveTrainShiftersReverse);
   }
 //method to give a voltage value to motors
-public static void SetMotorPercentOutputs(double leftoutput, double rightoutput) {
+public static void setMotorPercentOutputs(double leftoutput, double rightoutput) {
 driveMotors[1].set(ControlMode.PercentOutput, leftoutput);
 driveMotors[4].set(ControlMode.PercentOutput, rightoutput);
 }
 public void setMotorArcadeDrive(double throttle, double turn) {
   double leftPWM = throttle + turn;
   double rightPWM = throttle - turn;
+  
+  setMotorPercentOutputs(leftPWM, rightPWM);
+}
+public void setMotorTankDrive(double leftOutput, double rightOutput){
+setMotorPercentOutputs(leftOutput, rightOutput);
 }
   @Override
   public void periodic() {
