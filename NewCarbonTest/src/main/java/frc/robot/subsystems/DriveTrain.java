@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -42,6 +43,10 @@ public void setMotorArcadeDrive(double throttle, double turn) {
 }
 public void setMotorTankDrive(double leftOutput, double rightOutput){
 setMotorPercentOutputs(leftOutput, rightOutput);
+}
+public void setDriveMotorsState(boolean state) {
+  for (TalonSRX driveMotor : driveMotors)
+      driveMotor.setNeutralMode((state) ? NeutralMode.Coast : NeutralMode.Brake);
 }
   @Override
   public void periodic() {
