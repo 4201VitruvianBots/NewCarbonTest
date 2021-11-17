@@ -7,7 +7,10 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,15 +24,18 @@ public class DriveTrain extends SubsystemBase {
     new TalonSRX(Constants.rightRearDriveMotor),
   };
 
-  
+  DoubleSolenoid driveTrainShifters = new DoubleSolenoid(Constants.pcm,
+  Constants.driveTrainShiftersForward, Constants.driveTrainShiftersReverse);
+  public AHRS navX = new AHRS(SerialPort.Port.kMXP);
+
+
+
   public DriveTrain() {
 //making rightback follow right front and vice versa
   driveMotors[1].follow(driveMotors[0]);
   driveMotors[3].follow(driveMotors[2]);
-
-  DoubleSolenoid shifters = new DoubleSolenoid(Constants.pcm,
-  Constants.driveTrainShiftersForward, Constants.driveTrainShiftersReverse);
   }
+
 //method to give a voltage value to motors
 public static void setMotorPercentOutputs(double leftoutput, double rightoutput) {
 driveMotors[1].set(ControlMode.PercentOutput, leftoutput);
@@ -48,6 +54,10 @@ public void setDriveMotorsState(boolean state) {
   for (TalonSRX driveMotor : driveMotors)
       driveMotor.setNeutralMode((state) ? NeutralMode.Coast : NeutralMode.Brake);
 }
+public void updateSmartDashboard() {
+SmartDashboard.putNumber("Robot Angle", navX.getAngle());
+    }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
