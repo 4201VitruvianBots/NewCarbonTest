@@ -5,11 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.commands.SetArcadeDrive;
 import frc.robot.constants.Constants;
+import frc.robot.subsystems.DriveTrain;
 import frc.vitruvianlib.utils.JoystickWrapper;
 import frc.vitruvianlib.utils.XBoxTrigger;
 
@@ -20,6 +24,9 @@ import frc.vitruvianlib.utils.XBoxTrigger;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  private final PowerDistributionPanel pdp = new PowerDistributionPanel();
+  private final DriveTrain m_driveTrain = new DriveTrain(pdp);
 
   static final JoystickWrapper leftJoystick = new JoystickWrapper(Constants.leftJoystick);
   static final JoystickWrapper rightJoystick = new JoystickWrapper(Constants.rightJoystick);
@@ -52,6 +59,12 @@ public class RobotContainer {
   }
 
   public void initializeSubsystems() {
+    if(RobotBase.isReal()) {
+      m_driveTrain.setDefaultCommand(
+      new SetArcadeDrive(m_driveTrain,
+              () -> -leftJoystick.getRawAxis(1),
+              () -> rightJoystick.getRawAxis(0)));
+    }
   }
 
   /**
