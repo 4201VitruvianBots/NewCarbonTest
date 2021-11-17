@@ -4,124 +4,235 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.unmanaged.Unmanaged;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import edu.wpi.first.wpiutil.math.VecBuilder;
+import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.DriveConstants;
 
-public class Drivetrain extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  public Drivetrain() {
-      
+public class DriveTrain extends SubsystemBase {
+  /* Creates a new ExampleSubsystem. */
+  DifferentialDriveOdometry odometry;
+  private final TalonSRX[] driveMotors = {
+        new TalonSRX(Constants.leftFrontDriveMotor),
+        new TalonSRX(Constants.leftRearDriveMotor),
+        new TalonSRX(Constants.rightFrontDriveMotor),
+        new TalonSRX(Constants.rightRearDriveMotor)
+  };
 
-    final TalonSRX[] driveMotors = {
-   		new TalonSRX(Constants.leftFrontDriveMotor),
-    	new TalonSRX(Constants.leftRearDriveMotor),
-    	new TalonSRX(Constants.rightFrontDriveMotor),
-    	new TalonSRX(Constants.rightRearDriveMotor)
+  PowerDistributionPanel m_pdp;
 
-    }; 
-    
-    driveMotors[0].setInverted(true);
-    driveMotors[1].setInverted(true);
-    driveMotors[2].setInverted(false);
-    driveMotors[3].setInverted(false);
+  double m_leftOutput, m_rightOutput;
+
+  private final boolean[] brakeMode = {
+        true,
+        false,
+        true,
+        false
+};
 
 
 
+    private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
+//    // The left-side drive encoder
+//    private final Encoder m_leftEncoder =
+//            new Encoder(Constants.DriveConstants.kLeftEncoderPorts[0],
+//                    Constants.DriveConstants.kLeftEncoderPorts[1],
+//                    Constants.DriveConstants.kLeftEncoderReversed);
+//
+//    // The right-side drive encoder
+//    private final Encoder m_rightEncoder =
+//            new Encoder(Constants.DriveConstants.kRightEncoderPorts[0],
+//                    Constants.DriveConstants.kRightEncoderPorts[1],
+//                    Constants.DriveConstants.kRightEncoderReversed);
+//    private EncoderSim m_leftEncoderSim;
+//    private EncoderSim m_rightEncoderSim;
 
-  }
+    // Temporary until CTRE supports FalconFX in WPILib Sim
+    private final TalonSRX[] simMotors =  new TalonSRX[4];
 
-  public void setDriveStates(int mode){
-    switch(mode) {
-      case 2:  
+    public DifferentialDrivetrainSim m_drivetrainSimulator;
+    private ADXRS450_GyroSim m_gyroAngleSim;
+
+    private DoubleSupplier joystickCorrector = null;
+
+        public DriveTrain() {
+
+                
+
+                final TalonSRX[] driveMotors = { new TalonSRX(Constants.leftFrontDriveMotor),
+                                new TalonSRX(Constants.leftRearDriveMotor),
+                                new TalonSRX(Constants.rightFrontDriveMotor),
+                                new TalonSRX(Constants.rightRearDriveMotor)
+
+                };
+
+                driveMotors[0].setInverted(true);
+                driveMotors[1].setInverted(true);
+                driveMotors[2].setInverted(false);
+                driveMotors[3].setInverted(false);
+
+        }
+
+        public void setMotorArcadeDrive(double throttle, double turn) {
+                double leftPWM = throttle + turn;
+                double rightPWM = throttle - turn;
+
+                        double magnitude = Math.max(Math.abs(leftPWM), Math.abs(rightPWM));
+                        if (magnitude > 1.0) {
+                        leftPWM *= 1.0 / magnitude;
+                        rightPWM *= 1.0 / magnitude;
+                        }
+                       setMotorPercentOutput(leftPWM, rightPWM);
+
+        }
+
+        public void setMotorTankDrive(double leftOutput, double rightOutput) {
+                setMotorPercentOutput(leftOutput, rightOutput);
+            }
         
-        for(var motor : driveMotor)
-            motor.setNeutralMode(NeutralMode.Coast);
+            public void setVoltageOutput(double leftVoltage, double rightVoltage) {
+                var batteryVoltage = RobotController.getBatteryVoltage();
+                if (Math.max(Math.abs(leftVoltage), Math.abs(rightVoltage))
+                        > batteryVoltage) {
+                    leftVoltage *= batteryVoltage / 12.0;
+                    rightVoltage *= batteryVoltage / 12.0;
+                }
+                
+                if (joystickCorrector == null) {   
+                    setMotorPercentOutput(leftVoltage / batteryVoltage, rightVoltage / batteryVoltage);
+                } else {
+                    setMotorPercentOutput(leftVoltage / batteryVoltage + joystickCorrector.getAsDouble(), rightVoltage / batteryVoltage - joystickCorrector.getAsDouble());
+                }
+            }
+        
+            private void setMotorPercentOutput(double leftOutput, double rightOutput) {
+                m_leftOutput = leftOutput;
+                m_rightOutput = rightOutput;
+                driveMotors[0].set(ControlMode.PercentOutput, leftOutput);
+                driveMotors[2].set(ControlMode.PercentOutput, rightOutput);
+        
+            }
+        
+            // Make motors neutral
+            public void setDriveTrainNeutralMode(int mode) {
+                switch(mode) {
+                    case 2:
+                        for(var motor : driveMotors)
+                            motor.setNeutralMode(NeutralMode.Coast);
+                        for(var brakeMode : brakeMode)
+                            brakeMode = false;
+                        break;
+                    case 1:
+                        for(var motor : driveMotors)
+                            motor.setNeutralMode(NeutralMode.Brake);
+                        for(var brakeMode : brakeMode)
+                            brakeMode = true;
+                        break;
+                    case 0:
+                    default:
+                        driveMotors[0].setNeutralMode(NeutralMode.Brake);
+                        driveMotors[1].setNeutralMode(NeutralMode.Coast);
+                        driveMotors[2].setNeutralMode(NeutralMode.Brake);
+                        driveMotors[3].setNeutralMode(NeutralMode.Coast);
+                        brakeMode[0] = true;
+                        brakeMode[1] = false;
+                        brakeMode[2] = true;
+                        brakeMode[3] = false;
+                        break;
+                }
+            }
+        
+        //    public boolean getDriveShifterStatus() {
+        //        return m_driveShifterState;
+        //    }
+        
+        //    public void setDriveShifterStatus(boolean state) {
+        //        m_driveShifterState = state;
+        //        double gearRatio = state ? Constants.DriveConstants.kDriveGearingHigh : Constants.DriveConstants.kDriveGearingLow ;
+        //        double kEncoderDistancePerPulse = state ? Constants.DriveConstants.kEncoderDistancePerPulseHigh : Constants.DriveConstants.kEncoderDistancePerPulseLow;
+        
+        //        m_drivetrainSimulator.setCurrentGearing(gearRatio);
+        //        m_leftEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
+        //        m_rightEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
+        
+        //        driveTrainShifters.set(state ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+        //    }
+        
+            public DifferentialDriveWheelSpeeds getSpeeds() {
+        //        double gearRatio = getDriveShifterStatus() ? gearRatioHigh : gearRatioLow;
+        //        double gearRatio = gearRatioHigh;
+                double leftMetersPerSecond = 0, rightMetersPerSecond = 0;
+        
+                
+                return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
+            }
+        
+        
+                double leftMeters, rightMeters;
+        
+               
+        
+        
+       
+        
+          
+        
+           
+            
+            
+        
+     
+        
+            
+        
 
-        for(var breakMode : breakMode)
-            breakMode = false;
-
-          break;
-
-
-      case 1:
-
-        for(var motor : driveMotor)
-            motor.setNeutralMode(NeutralMode.brake);
-
-        for(var brakeMode : brakeMode)
-        brakeMode = true;
-
-        break;
-
-      case 0:
-
-      default:
-
-        driveMotor[0].setNeutralMode(NeutralMode.brake);
-        driveMotor[1].setNeutralMode(NeutralMode.brake);
-        driveMotor[2].setNeutralMode(NeutralMode.brake);
-        driveMotor[3].setNeutralMode(NeutralMode.brake);
-
-        brakeMode[0] = true;
-        brakeMode[1] = true;
-        brakeMode[2] = true;
-        brakeMode[3] = true;
-
-       break;
-
-      
-    }
+               
 
 
 
-}
+  
 
-private void updateSmartDashboard() {
-  if (RobotBase.isReal()) {
-      SmartDashboardTab.putNumber("DriveTrain", "Left Encoder", getEncoderCount(0));
-      SmartDashboardTab.putNumber("DriveTrain", "Right Encoder", getEncoderCount(2));
-      SmartDashboardTab.putNumber("DriveTrain", "Left Distance", getWheelDistanceMeters(0));
-      SmartDashboardTab.putNumber("DriveTrain", "Right Distance", getWheelDistanceMeters(2));
-      SmartDashboardTab.putNumber("DriveTrain", "xCoordinate",
-              Units.metersToFeet(getRobotPose().getTranslation().getX()));
-      SmartDashboardTab.putNumber("DriveTrain", "yCoordinate",
-              Units.metersToFeet(getRobotPose().getTranslation().getY()));
-      SmartDashboardTab.putNumber("DriveTrain", "Angle", getRobotPose().getRotation().getDegrees());
-      SmartDashboardTab.putNumber("DriveTrain", "leftSpeed",
-              Units.metersToFeet(getSpeeds().leftMetersPerSecond));
-      SmartDashboardTab.putNumber("DriveTrain", "rightSpeed",
-              Units.metersToFeet(getSpeeds().rightMetersPerSecond));
-//            SmartDashboardTab.putBoolean("DriveTrain","high gear",
-//                    getDriveShifterStatus());
+    
+       
+        
 
-      SmartDashboardTab.putNumber("Turret", "Robot Angle", getAngle());
-  } else {
-      SmartDashboardTab.putNumber("DriveTrain", "Left Encoder", getEncoderCount(0));
-      SmartDashboardTab.putNumber("DriveTrain", "Right Encoder", getEncoderCount(2));
-      SmartDashboardTab.putNumber("DriveTrain", "xCoordinate",
-              Units.metersToFeet(getRobotPose().getTranslation().getX()));
-      SmartDashboardTab.putNumber("DriveTrain", "yCoordinate",
-              Units.metersToFeet(getRobotPose().getTranslation().getY()));
-      SmartDashboardTab.putNumber("DriveTrain", "Angle", getRobotPose().getRotation().getDegrees());
-      SmartDashboardTab.putNumber("DriveTrain", "leftSpeed",
-              Units.metersToFeet(m_drivetrainSimulator.getLeftVelocityMetersPerSecond()));
-      SmartDashboardTab.putNumber("DriveTrain", "rightSpeed",
-              Units.metersToFeet(m_drivetrainSimulator.getLeftVelocityMetersPerSecond()));
 
-      SmartDashboardTab.putNumber("Turret", "Robot Angle", getAngle());
-  }
-}
+
+
+
+
 
 
   @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        odometry.update(Rotation2d.fromDegrees(getHeading()), getWheelDistanceMeters(0), getWheelDistanceMeters(2));
-
-        updateSmartDashboard();
+        
       }
 
 }
