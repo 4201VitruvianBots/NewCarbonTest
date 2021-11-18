@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.SetArcadeDrive;
 import frc.robot.subsystems.DriveTrain;
@@ -24,6 +25,9 @@ public class RobotContainer {
   public static DriveTrain m_driveTrain = new DriveTrain();
   public static DoubleSupplier m_throttle;
   public static DoubleSupplier m_turn;
+  Joystick leftJoystick = new Joystick(Constants.leftJoystick);
+  Joystick rightJoystick = new Joystick(Constants.rightJoystick);
+  
   // private final m_command = new ExampleCommand(m_exampleSubsystem);
   //
   /**
@@ -45,6 +49,17 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {}
+  
+  private void initializeSubsystems() {
+   
+    if(RobotBase.isReal()) {
+      m_driveTrain.setDefaultCommand(
+       new SetArcadeDrive(m_driveTrain,
+       () -> leftJoystick.getRawAxis(1), 
+       () -> rightJoystick.getRawAxis(0)));
+      
+    }
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
