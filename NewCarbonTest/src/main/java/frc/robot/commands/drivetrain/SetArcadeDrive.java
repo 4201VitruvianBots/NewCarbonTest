@@ -7,7 +7,7 @@ import frc.robot.subsystems.DriveTrain;
 
 
 public class SetArcadeDrive extends CommandBase {
-
+    @SuppressWarnings({"PMD.UnusedPrivateField","PMD.SingularField"})
     private final DriveTrain m_driveTrain;
     private final DoubleSupplier m_throttle, m_turn;
 
@@ -22,19 +22,16 @@ public class SetArcadeDrive extends CommandBase {
         addRequirements(driveTrain);
     }
     @Override
-    public void initialize() {
-    
-}
+    public void initialize() {}
 
     @Override
     public void execute() {
         double joystickY = (Math.abs(m_throttle.getAsDouble()) > 0.05) ? m_throttle.getAsDouble() : 0;
         double joystickX = (Math.abs(m_turn.getAsDouble()) > 0.05) ? m_turn.getAsDouble() : 0;
-
+       
         double throttle = joystickY; //Y is throttle because when you push the joystick up, it will go forward.
         double turn = joystickX;
-        
-       throttle = throttle < 0 ? Math.max(-0.7, throttle) : throttle;
+        throttle = throttle < 0 ? Math.max(-0.7, throttle) : throttle;
        
     
         m_driveTrain.setMotorArcadeDrive(throttle, turn);
@@ -51,5 +48,4 @@ public class SetArcadeDrive extends CommandBase {
     public boolean isFinished() {
         return false;
     }
-
 }

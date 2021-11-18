@@ -26,7 +26,7 @@ import frc.robot.subsystems.DriveTrain;
 public class RobotContainer {
 
   private final PowerDistributionPanel pdp = new PowerDistributionPanel();
-  private final DriveTrain m_driveTrain = new DriveTrain();
+  private final DriveTrain m_driveTrain = new DriveTrain(pdp);
 
   static final Joystick leftJoystick = new Joystick(Constants.leftJoystick);
  static final Joystick rightJoystick = new Joystick(Constants.rightJoystick);
