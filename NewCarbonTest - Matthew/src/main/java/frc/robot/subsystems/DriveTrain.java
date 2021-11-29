@@ -98,7 +98,7 @@ public class DriveTrain extends SubsystemBase {
 
         if (RobotBase.isSimulation()) { // If our robot is simulated
             for(int i = 0; i < 4; i++)
-                simMotors[i] = new TalonSRX(24 + i);
+                simMotors[i] = new TalonSRX(20 + i);
             configureCtreMotors(simMotors);
             simMotors[0].setSensorPhase(true);
             simMotors[2].setSensorPhase(false);
