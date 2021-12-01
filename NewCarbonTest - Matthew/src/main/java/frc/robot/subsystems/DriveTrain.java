@@ -38,10 +38,10 @@ import frc.robot.constants.Constants.DriveConstants;
 
 public class DriveTrain extends SubsystemBase {
   private TalonSRX[] driveMotors = {
-    new TalonSRX(Constants.leftFrontDriveMotor),
-    new TalonSRX(Constants.leftRearDriveMotor),
-    new TalonSRX(Constants.rightFrontDriveMotor),
-    new TalonSRX(Constants.rightRearDriveMotor),
+    new TalonSRX(Constants.CAN.leftFrontDriveMotor),
+    new TalonSRX(Constants.CAN.leftRearDriveMotor),
+    new TalonSRX(Constants.CAN.rightFrontDriveMotor),
+    new TalonSRX(Constants.CAN.rightRearDriveMotor),
   };
 
   // PID controller values
@@ -55,7 +55,7 @@ public class DriveTrain extends SubsystemBase {
   private double kA = 0.0289;
 
   // Set up constants
-  private double wheelDiameter = 0.5;
+  private double wheelDiameterFeet = 0.5; 
   private final double gearRatio = 1.0 / 5.0;
 
   DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(21.5));
@@ -94,7 +94,7 @@ public class DriveTrain extends SubsystemBase {
         configureCtreMotors(driveMotors);
 
         m_pdp = pdp;
-        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
+        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeadingDegrees()));
 
         if (RobotBase.isSimulation()) { // If our robot is simulated
             for(int i = 0; i < 4; i++)
@@ -116,6 +116,7 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putData("DT Subsystem", this);
     }
 
+    //Configures Robot motors
     public void configureCtreMotors(BaseTalon... motors) {
         for(int i = 0; i < motors.length; i++) {
             motors[i].configFactoryDefault();
@@ -157,21 +158,21 @@ public class DriveTrain extends SubsystemBase {
         return driveMotors[sensorIndex].getSelectedSensorPosition();
     }
 
-    public double getAngle() {
+    public double getAngleDegrees() {
         if(RobotBase.isReal())
             return navX.getAngle();
         else
             return m_gyro.getAngle();
     }
 
-    public double getHeading() {
+    public double getHeadingDegrees() {
         if(RobotBase.isReal())
             return Math.IEEEremainder(-navX.getAngle(), 360);
         else
             return Math.IEEEremainder(m_gyro.getAngle(), 360) * (Constants.DriveConstants.kGyroReversed ? -1.0 : 1.0);
     }
 
-    public void resetAngle() {
+    public void resetAngleDegrees() {
         navX.zeroYaw();
     }
 
@@ -182,9 +183,9 @@ public class DriveTrain extends SubsystemBase {
     public double getWheelDistanceMeters(int sensorIndex) {
 
         if(RobotBase.isReal())
-            return (driveMotors[sensorIndex].getSelectedSensorPosition() / 4096.0) * gearRatio * Math.PI * Units.feetToMeters(wheelDiameter);
+            return (driveMotors[sensorIndex].getSelectedSensorPosition() / 4096.0) * gearRatio * Math.PI * Units.feetToMeters(wheelDiameterFeet);
         else {
-            return (simMotors[sensorIndex].getSelectedSensorPosition() / 4096.0) * Math.PI * Units.feetToMeters(wheelDiameter);
+            return (simMotors[sensorIndex].getSelectedSensorPosition() / 4096.0) * Math.PI * Units.feetToMeters(wheelDiameterFeet);
             }
     }
 
@@ -279,33 +280,33 @@ public class DriveTrain extends SubsystemBase {
           }
         }
 
-        public DifferentialDriveWheelSpeeds getSpeeds() {
+        public DifferentialDriveWheelSpeeds getSpeedsMetersPerSecond() {
           double leftMetersPerSecond = 0, rightMetersPerSecond = 0;
 
           if (RobotBase.isReal()) {
             leftMetersPerSecond = (driveMotors[0].getSelectedSensorVelocity() * 10.0 / 2048.0) * gearRatio * Math.PI
-                * Units.feetToMeters(wheelDiameter);
+                * Units.feetToMeters(wheelDiameterFeet);
             rightMetersPerSecond = (driveMotors[2].getSelectedSensorVelocity() * 10.0 / 2048.0) * gearRatio * Math.PI
-                * Units.feetToMeters(wheelDiameter);
+                * Units.feetToMeters(wheelDiameterFeet);
           }
 
           return new DifferentialDriveWheelSpeeds(leftMetersPerSecond, rightMetersPerSecond);
         }
 
-        public double getTravelDistance() {
+        public double getTravelDistanceMeters() {
           double leftMeters, rightMeters;
 
           if (RobotBase.isReal()) {
             leftMeters = (driveMotors[0].getSelectedSensorPosition() * 10.0 / 2048) * gearRatio * Math.PI
-                * Units.feetToMeters(wheelDiameter);
+                * Units.feetToMeters(wheelDiameterFeet);
             rightMeters = (driveMotors[2].getSelectedSensorPosition() * 10.0 / 2048) * gearRatio * Math.PI
-                * Units.feetToMeters(wheelDiameter);
+                * Units.feetToMeters(wheelDiameterFeet);
             return (leftMeters + rightMeters) / 2.0;
           } else {
             leftMeters = (simMotors[0].getSelectedSensorPosition() * 10.0 / 4096) * Math.PI
-                * Units.feetToMeters(wheelDiameter);
+                * Units.feetToMeters(wheelDiameterFeet);
             rightMeters = (simMotors[2].getSelectedSensorPosition() * 10.0 / 4096) * Math.PI
-                * Units.feetToMeters(wheelDiameter);
+                * Units.feetToMeters(wheelDiameterFeet);
             return (leftMeters + rightMeters) / 2.0;
           }
         }
@@ -343,7 +344,7 @@ public class DriveTrain extends SubsystemBase {
         @Override
         public void periodic() {
           // This method will be called once per scheduler run
-          odometry.update(Rotation2d.fromDegrees(getHeading()), getWheelDistanceMeters(0), getWheelDistanceMeters(2));
+          odometry.update(Rotation2d.fromDegrees(getHeadingDegrees()), getWheelDistanceMeters(0), getWheelDistanceMeters(2));
         }
 
         public double getDrawnCurrentAmps() {
@@ -372,12 +373,12 @@ public class DriveTrain extends SubsystemBase {
 
     int distanceMetersToTalonSrxUnits(double meters) {
         // To simplify, for simulating Talons, pretend they are on the wheel axel (e.g. don't care about the gear ratio)
-        return (int) (meters * 4096.0 / (Units.feetToMeters(wheelDiameter) * Math.PI));
+        return (int) (meters * 4096.0 / (Units.feetToMeters(wheelDiameterFeet) * Math.PI));
     }
 
     int velocityMetersToTalonSrxUnits(double meters) {
         // To simplify, for simulating Talons, pretend they are on the wheel axel (e.g. don't care about the gear ratio)
-        return (int) (meters * 4096.0 / (Units.feetToMeters(wheelDiameter) * Math.PI * 10.0));
+        return (int) (meters * 4096.0 / (Units.feetToMeters(wheelDiameterFeet) * Math.PI * 10.0));
     }
 
     int distanceMetersToFalconFxUnits(double meters) {

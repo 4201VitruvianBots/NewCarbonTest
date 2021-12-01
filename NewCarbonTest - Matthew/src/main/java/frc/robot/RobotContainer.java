@@ -28,9 +28,9 @@ public class RobotContainer {
   private final PowerDistributionPanel pdp = new PowerDistributionPanel();
   private final DriveTrain m_driveTrain = new DriveTrain(pdp);
 
-  static final JoystickWrapper leftJoystick = new JoystickWrapper(Constants.leftJoystick);
-  static final JoystickWrapper rightJoystick = new JoystickWrapper(Constants.rightJoystick);
-  static final JoystickWrapper xBoxController = new JoystickWrapper(Constants.xBoxController);
+  static final JoystickWrapper leftJoystick = new JoystickWrapper(Constants.USB.leftJoystick);
+  static final JoystickWrapper rightJoystick = new JoystickWrapper(Constants.USB.rightJoystick);
+  static final JoystickWrapper xBoxController = new JoystickWrapper(Constants.USB.xBoxController);
   
   static JoystickWrapper testContoller = new JoystickWrapper(4);
   private static boolean init = false;
@@ -100,14 +100,11 @@ public class RobotContainer {
   }
 
   public void robotPeriodic() {
-
   }
 
   public void teleOpInit() {
-
   }
 
   public void teleOpPeriodic() {
-
   }
 }
