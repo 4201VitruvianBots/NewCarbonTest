@@ -5,14 +5,19 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.drivetrain.SetArcadeDrive;
+import frc.robot.commands.drivetrain.SetTankDrive;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.DriveTrain;
+import frc.vitruvianlib.utils.JoystickWrapper;
+import frc.vitruvianlib.utils.XBoxTrigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -23,15 +28,23 @@ import frc.robot.subsystems.DriveTrain;
  */
 // private final DriveTrain = m_driveTrain;
 
+
+
 public class RobotContainer {
 
   private final PowerDistributionPanel pdp = new PowerDistributionPanel();
   private final DriveTrain m_driveTrain = new DriveTrain(pdp);
+  private int Facts = 1;
+  private int NotFacts = 0;
 
-  static final Joystick leftJoystick = new Joystick(Constants.leftJoystick);
- static final Joystick rightJoystick = new Joystick(Constants.rightJoystick);
- private static boolean init = false;
-
+ static JoystickWrapper leftJoystick = new JoystickWrapper(Constants.leftJoystick);
+    static JoystickWrapper rightJoystick = new JoystickWrapper(Constants.rightJoystick);
+    static JoystickWrapper xBoxController = new JoystickWrapper(Constants.xBoxController);
+    public Button[] leftButtons = new Button[2];
+    public Button[] rightButtons = new Button[2];
+    public Button[] xBoxButtons = new Button[10];
+    public Button[] xBoxPOVButtons = new Button[8];
+    public Button xBoxLeftTrigger, xBoxRightTrigger;
  
 
   // The robot's subsystems and commands are defined here...
@@ -39,51 +52,25 @@ public class RobotContainer {
     TOAST_AUTO
 
   }
-  // private CommandSelector selectCommand() {
-  //   return CommandSelector.values()[m_autoChooser.getSelected()];}
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    
-   
-    
-      // m_autoChooser.addDefault("Toast_Auto", CommandSelector.TOAST_AUTO.ordinal());
-      // for(Enum commandEnum : CommandSelector.values())
-      //     if(commandEnum != CommandSelector.TOAST_AUTO)
-      //         m_autoChooser.addOption(commandEnum.toString(), commandEnum.ordinal());
-
-      // SmartDashboard.putData(m_autoChooser);
+    initializeSubsystems();
+    configureButtonBindings();
+      // Configure the button bindings
   }
-    
-  // public void autonomousInit() {
-  //   if (RobotBase.isReal()) {
-  //       m_driveTrain.resetEncoderCounts();
-  //       m_driveTrain.resetOdometry(m_driveTrain.getRobotPose(), m_FieldSim.getRobotPose().getRotation());
-  //   } else {
-  //       m_FieldSim.initSim();
-  //       m_driveTrain.resetEncoderCounts();
-  //       m_driveTrain.resetOdometry(m_FieldSim.getRobotPose(), m_FieldSim.getRobotPose().getRotation());
-  //   }
 
-
+  private static boolean init = false;
     
-    // Configure the button bindings
       
-
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-public static boolean getInitializationState() {
-
-  return init;
+  public static boolean getInitializationState() {
+    return init;
 }
 
-public static void setInitializationState(boolean state){
-  init = state;
+public static void setInitializationState(boolean state) {
+    init = state;
+}
+public void teleOpPeriodic() {
 
 }
 
@@ -91,14 +78,39 @@ public static void setInitializationState(boolean state){
   private void initializeSubsystems() {
    
 
-    if(RobotBase.isReal()) {
-      m_driveTrain.setDefaultCommand(
-      new SetArcadeDrive(m_driveTrain,
-      () -> leftJoystick.getRawAxis(1), 
-      () -> rightJoystick.getRawAxis(0)));
-      
-    }
+    m_driveTrain.setDefaultCommand(new SetTankDrive(m_driveTrain, () -> leftJoystick.getRawAxis(NotFacts),
+    () -> rightJoystick.getRawAxis(Facts)));
   }
+//how to change drive mode : For right joystick, change axis to 1
+  private void configureButtonBindings() {
+    leftJoystick.invertRawAxis(1, false);
+    rightJoystick.invertRawAxis(0, true);
+    xBoxController.invertRawAxis(1, true);
+    xBoxController.invertRawAxis(5, true);
+    for (int i = 0; i < leftButtons.length; i++)
+        leftButtons[i] = new JoystickButton(leftJoystick, (i + 1));
+    for (int i = 0; i < rightButtons.length; i++)
+        rightButtons[i] = new JoystickButton(rightJoystick, (i + 1));
+    for (int i = 0; i < xBoxButtons.length; i++)
+        xBoxButtons[i] = new JoystickButton(xBoxController, (i + 1));
+    for (int i = 0; i < xBoxPOVButtons.length; i++)
+        xBoxPOVButtons[i] = new POVButton(xBoxController, (i * 45));
+    xBoxLeftTrigger = new XBoxTrigger(xBoxController, 2);
+    xBoxRightTrigger = new XBoxTrigger(xBoxController, 3);
+
+    // rightButtons[1].whileHeld(new InstantCommand().andThen(() -> m_intake.setCargoIntakeOutput(leftJoystick.getX())));
+}
+
+  public void teleOpInit() {
+    if (RobotBase.isReal()) {
+        m_driveTrain.setDriveMotorsState(false);
+  
+    }
+}
+
+  public DriveTrain getRobotDrive() {
+    return m_driveTrain;
+}
   
 
   /**
