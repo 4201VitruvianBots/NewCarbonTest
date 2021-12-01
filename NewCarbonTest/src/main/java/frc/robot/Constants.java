@@ -13,13 +13,31 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    // USB PORTS
     public static final int leftJoystick = 0;
     public static final int rightJoystick = 1;
-	public static int driveTrainShiftersForward = 0; 
-    public static int driveTrainShiftersReverse = 1; 
-    public static int pcm = 11;
-    public static int leftFrontDriveMotor = 20;
-    public static int leftRearDriveMotor = 21; 
-    public static int rightFrontDriveMotor = 22;
-    public static int rightRearDriveMotor = 23;
+    public static final int xBoxController = 2;
+
+    // CAN ADDRESSES
+    public static final int pcmOne = 11;
+
+    public static final int leftFrontDriveMotor = 20;
+    public static final int leftRearDriveMotor = 21;
+    public static final int rightFrontDriveMotor = 22;
+    public static final int rightRearDriveMotor = 23;
+    public static final int intakeMotor = 30;
+    public static final int indexerMotor = 35;
+    public static final int kickerMotor = 36;
+    public static final int flywheelMotorA = 40;
+    public static final int flywheelMotorB = 41;
+    public static final int colorWheelMotor = 45;
+    public static final int climbMotorA = 50;
+    public static final int climbMotorB = 51;
+    public static final int skyhookMotor = 55;
+    public static final int turretMotor = 60;
+    public static final int turretEncoder = 61;
+
+    //Solenoid addresses
+    public static final int driveTrainShiftersForward = 0;
+    public static final int driveTrainShiftersReverse = 1;
 }
