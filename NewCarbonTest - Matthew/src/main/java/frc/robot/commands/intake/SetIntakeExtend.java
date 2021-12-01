@@ -7,10 +7,8 @@
 
 package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 
 /**
@@ -21,7 +19,7 @@ public class SetIntakeExtend extends InstantCommand {
 
     public SetIntakeExtend(boolean extend) {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.intakeExtend);
+        requires(RobotContainer.intakeExtend);
 
         this.extend = extend;
     }
@@ -35,7 +33,7 @@ public class SetIntakeExtend extends InstantCommand {
                 break;
             case 0:
             default:
-                Robot.intakeExtend.setHarpoonExtend(extend);
+                RobotContainer.intakeExtend.setHarpoonExtend(extend);
                 break;
         }
     }

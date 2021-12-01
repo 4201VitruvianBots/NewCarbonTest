@@ -38,22 +38,55 @@ public final class Constants {
         public static final int rightFrontDriveMotor = 22;
         public static final int rightRearDriveMotor = 23;
         public static final int intakeMotor = 30;
-        public static final int indexerMotor = 35;
-        public static final int kickerMotor = 36;
-        public static final int flywheelMotorA = 40;
-        public static final int flywheelMotorB = 41;
-        public static final int colorWheelMotor = 45;
-        public static final int climbMotorA = 50;
-        public static final int climbMotorB = 51;
-        public static final int skyhookMotor = 55;
-        public static final int turretMotor = 60;
-        public static final int turretEncoder = 61;
+        public static int wristMotor = 40;
+        public static int cargoIntakeMotor = 60;
+        public static int hatchIntakeMotor = 61;
     }
 
     //Solenoid addresses
     public static final class SolenoidAddresses {
         public static final int driveTrainShiftersForward = 0;
         public static final int driveTrainShiftersReverse = 1;
+        public static int hatchIntakeExtendForward = 2;
+        public static int hatchIntakeExtendReverse = 3;
+        public static int hatchIntakeSecureForward = 4;
+        public static int hatchIntakeSecureReverse = 5;
+    }
+
+    // Setpoints (Units in inches or degrees)
+    public static final class Setpoints {
+        public static double WRIST_RETRACTED_ANGLE = 165;
+        public static double WRIST_RETRACTED_CARGO_ANGLE = 135;
+        public static double WRIST_EXTENDED_ANGLE = 0;
+        public static double WRIST_CARGO_ANGLE = 45;
+        public static double WRIST_CARGO_SHIP_ANGLE = 0;
+        public static double WRIST_CARGO_INTAKE_STATION_ANGLE = 90;
+        public static double WRIST_CARGO_HIGH_ANGLE = 40;
+        public static double WRIST_HATCH_LOW_ANGLE = 45;
+        public static double WRIST_HATCH_ANGLE = 85;
+        public static double ELEVATOR_HOME_POSITION = 0;
+
+        public static double CARGO_INTAKE_SPEED = -0.7;
+        public static double CARGO_OUTTAKE_SPEED = 0.7;
+        public static double CARGO_HOLD_SPEED = -0.2;
+        public static double HATCH_INTAKE_SPEED = -0.8;
+        public static double HATCH_HOLD_SPEED = 0;
+        public static double HATCH_OUTTAKE_SPEED = 0.8;
+        public static double HATCH_GROUND_INTAKE_SPEED = -0.8;
+        public static double HATCH_GROUND_HOLD_SPEED = -0.1;
+        public static double HATCH_GROUND_OUTTAKE_SPEED = 1;
+    }
+
+    //DIOS
+    public static final class DIOS {
+        public static int bannerIR = 0;
+        public static int hatchSensor = 1;
+        public static int elevatorBottom = 2;
+        public static int elevatorTop = 3;
+        public static int elevatorMid = 4;
+        public static int wristBottom = 5;
+        public static int wristTop = 6;
+        public static int robotSwitch = 9;
     }
 
     public static final class DriveConstants {

@@ -9,9 +9,9 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
+import frc.robot.constants.Constants;
 
 /**
  * An example command.  You can replace me with your own command.
@@ -20,7 +20,7 @@ public class IntakeIntake extends Command {
 
     public IntakeIntake() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.intake);
+        requires(RobotContainer.intake);
     }
 
     // Called just before this Command runs the first time
@@ -41,14 +41,14 @@ public class IntakeIntake extends Command {
     protected void execute() {
         switch (Intake.intakeState) {
             case 2:
-                Robot.intake.setCargoIntakeOutput(RobotContainer.CARGO_INTAKE_SPEED);
+                RobotContainer.intake.setCargoIntakeOutput(Constants.Setpoints.CARGO_INTAKE_SPEED);
                 break;
             case 1:
-                Robot.intake.setHatchGroundIntakeOutput(RobotContainer.HATCH_GROUND_INTAKE_SPEED);
+                RobotContainer.intake.setHatchGroundIntakeOutput(Constants.Setpoints.HATCH_GROUND_INTAKE_SPEED);
                 break;
             case 0:
             default:
-                Robot.intake.setHatchIntakeOutput(RobotContainer.HATCH_INTAKE_SPEED);
+                RobotContainer.intake.setHatchIntakeOutput(Constants.Setpoints.HATCH_INTAKE_SPEED);
                 break;
         }
     }
@@ -56,7 +56,7 @@ public class IntakeIntake extends Command {
     @Override
     protected boolean isFinished() {
         if(Intake.intakeState == 2)
-            return Robot.intake.bannerIR.get();
+            return RobotContainer.intake.bannerIR.get();
         else
             return false;
     }
@@ -67,12 +67,12 @@ public class IntakeIntake extends Command {
             case 2:
                 break;
             case 1:
-                Robot.intake.setHatchIntakeOutput(RobotContainer.HATCH_GROUND_HOLD_SPEED);
+                RobotContainer.intake.setHatchIntakeOutput(Constants.Setpoints.HATCH_GROUND_HOLD_SPEED);
                 break;
             case 0:
             default:
                 Timer.delay(0.25);
-                Robot.intake.setHatchIntakeOutput(0);
+                RobotContainer.intake.setHatchIntakeOutput(0);
                 break;
         }
 

@@ -11,14 +11,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
-import frc.robot.commands.intake.IntakePassive;
 import frc.robot.constants.Constants;
 
 public class Intake extends Subsystem {
@@ -32,11 +26,11 @@ public class Intake extends Subsystem {
     static boolean isBannerTripped = false;
 
     private TalonSRX[] intakeMotors = {
-        new TalonSRX(RobotContainer.cargoIntakeMotor),
-        new TalonSRX(RobotContainer.hatchIntakeMotor)
+        new TalonSRX(Constants.CAN.cargoIntakeMotor),
+        new TalonSRX(Constants.CAN.hatchIntakeMotor)
     };
 
-    public DigitalInput bannerIR = new DigitalInput(RobotContainer.bannerIR);
+    public DigitalInput bannerIR = new DigitalInput(Constants.DIOS.bannerIR);
 
     public Intake() {
         super("Intake");
@@ -68,10 +62,10 @@ public class Intake extends Subsystem {
     }
 
     public void updateCargoIntakeState() {
-        if(Constants.rightButtons[0].get()) {
+        if(RobotContainer.rightButtons[2].get()) {
 
         } else if(bannerIR.get() && !isBannerTripped) {
-            setCargoIntakeOutput(RobotContainer.CARGO_HOLD_SPEED);
+            setCargoIntakeOutput(Constants.Setpoints.CARGO_HOLD_SPEED);
         } else if(isBannerTripped) {
             setCargoIntakeOutput(0);
             isBannerTripped = false;

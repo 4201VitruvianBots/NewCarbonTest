@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -15,6 +16,9 @@ import frc.robot.commands.SetArcadeDrive;
 import frc.robot.commands.SetTankDrive;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeExtend;
+import frc.robot.subsystems.Wrist;
 import frc.vitruvianlib.utils.JoystickWrapper;
 import frc.vitruvianlib.utils.XBoxTrigger;
 
@@ -28,6 +32,9 @@ public class RobotContainer {
 
   private final PowerDistributionPanel pdp = new PowerDistributionPanel();
   private final DriveTrain m_driveTrain = new DriveTrain(pdp);
+  public final static Intake intake = new Intake();
+  public static Wrist wrist = new Wrist();
+  public static IntakeExtend intakeExtend = new IntakeExtend();
 
   static final JoystickWrapper leftJoystick = new JoystickWrapper(Constants.USB.leftJoystick);
   static final JoystickWrapper rightJoystick = new JoystickWrapper(Constants.USB.rightJoystick);
@@ -37,7 +44,7 @@ public class RobotContainer {
   private static boolean init = false;
   
   public final Button[] leftButtons = new Button[2];
-  public final Button[] rightButtons = new Button[2];
+  public final static Button[] rightButtons = new Button[2];
   public final Button[] xBoxButtons = new Button[10];
   public final Button[] xBoxPOVButtons = new Button[8];
   
@@ -89,6 +96,24 @@ public class RobotContainer {
       xBoxPOVButtons[i] = new POVButton(xBoxController, (i * 45));
     xBoxLeftTrigger = new XBoxTrigger(xBoxController, 2);
     xBoxRightTrigger = new XBoxTrigger(xBoxController, 3);
+  }
+
+  public static double getXBoxRightY(){
+    return -xBoxController.getRawAxis(5);
+  }
+
+  public static void enableXBoxRumbleTimed(double duration){
+    Thread t = new Thread(() -> {
+      setXBoxRumble(0.8);
+      Timer.delay(duration);
+      setXBoxRumble(0);
+    });
+    t.start();
+  }
+
+  private static void setXBoxRumble(double value) {
+    xBoxController.setRumble(GenericHID.RumbleType.kLeftRumble, value);
+    xBoxController.setRumble(GenericHID.RumbleType.kRightRumble, value);
   }
 
   /**

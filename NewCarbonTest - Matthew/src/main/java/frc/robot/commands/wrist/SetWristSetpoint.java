@@ -5,35 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.intake;
+package frc.robot.commands.wrist;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Wrist;
 
 /**
  * An example command.  You can replace me with your own command.
  */
-public class SetIntakeState extends InstantCommand {
-    int state;
-    public SetIntakeState(int state) {
-        requires(RobotContainer.intake);
-        requires(RobotContainer.intakeExtend);
-        this.state = state;
+public class SetWristSetpoint extends InstantCommand {
+    double setpoint;
+    public SetWristSetpoint(double angle) {
+        // Use requires() here to declare subsystem dependencies
+        requires(RobotContainer.wrist);
+        this.setpoint = angle;
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        if(state == 2) {
-            RobotContainer.intake.setHatchIntakeOutput(0);
-            RobotContainer.intakeExtend.setHarpoonExtend(false);
-        }
-
-        if(state != 2)
-            RobotContainer.intake.setCargoIntakeOutput(0);
-
-        Intake.intakeState = state;
+        if(Wrist.controlMode == 1)
+            RobotContainer.wrist.setAbsolutePosition(setpoint);
     }
 
     // Called once after isFinished returns true
@@ -41,6 +34,8 @@ public class SetIntakeState extends InstantCommand {
     protected void end() {
     }
 
+    // Called when another command which requires one or more of the same
+    // subsystems is scheduled to run
     @Override
     protected void interrupted() {
         end();

@@ -8,8 +8,7 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.Robot;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 
 /**
@@ -18,7 +17,7 @@ import frc.robot.subsystems.Intake;
 public class HoldHatchIntakeExtend extends Command {
     public HoldHatchIntakeExtend() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.intakeExtend);
+        requires(RobotContainer.intakeExtend);
     }
 
     // Called just before this Command runs the first time
@@ -41,7 +40,7 @@ public class HoldHatchIntakeExtend extends Command {
                 break;
             case 0:
             default:
-                Robot.intakeExtend.setHarpoonExtend(true);
+                RobotContainer.intakeExtend.setHarpoonExtend(true);
                 break;
         }
     }
@@ -58,7 +57,7 @@ public class HoldHatchIntakeExtend extends Command {
             case 1:
             case 0:
             default:
-                Robot.intakeExtend.setHarpoonExtend(false);
+                RobotContainer.intakeExtend.setHarpoonExtend(false);
                 break;
         }
     }

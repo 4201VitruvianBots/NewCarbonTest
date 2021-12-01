@@ -7,11 +7,10 @@
 
 package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
+import frc.robot.constants.Constants;
 
 /**
  * An example command.  You can replace me with your own command.
@@ -21,7 +20,7 @@ public class IntakePassive extends Command {
 
     public IntakePassive() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.intake);
+        requires(RobotContainer.intake);
     }
 
     // Called just before this Command runs the first time
@@ -42,7 +41,7 @@ public class IntakePassive extends Command {
             case 2:
                 break;
             case 1:
-                Robot.intake.setHatchGroundIntakeOutput(RobotContainer.HATCH_GROUND_INTAKE_SPEED);
+                RobotContainer.intake.setHatchGroundIntakeOutput(Constants.Setpoints.HATCH_GROUND_INTAKE_SPEED);
                 break;
             case 0:
             default:
