@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.SetArcadeDrive;
+import frc.robot.commands.SetTankDrive;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.DriveTrain;
 import frc.vitruvianlib.utils.JoystickWrapper;
@@ -61,9 +62,9 @@ public class RobotContainer {
   public void initializeSubsystems() {
     if(RobotBase.isReal()) {
       m_driveTrain.setDefaultCommand(
-      new SetArcadeDrive(m_driveTrain,
+      new SetTankDrive(m_driveTrain,
               () -> -leftJoystick.getRawAxis(1),
-              () -> rightJoystick.getRawAxis(0)));
+              () -> rightJoystick.getRawAxis(1)));
     }
   }
 
