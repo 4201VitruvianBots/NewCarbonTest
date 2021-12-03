@@ -13,6 +13,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    // USB PORTS
     public static final int leftJoystick = 0;
     public static final int rightJoystick = 1;
 	public static int driveTrainShiftersForward = 0; 

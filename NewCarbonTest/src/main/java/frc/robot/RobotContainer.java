@@ -36,10 +36,8 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    Joystick leftJoystick = new Joystick(Constants.leftJoystick);
-    Joystick rightJoystick = new Joystick(Constants.rightJoystick);
 
-    m_driveTrain.setDefaultCommand(new SetArcadeDrive(m_driveTrain, m_throttle, m_turn));
+    m_driveTrain.setDefaultCommand(new SetArcadeDrive(m_driveTrain, () -> leftJoystick.getRawAxis(1), () -> rightJoystick.getRawAxis(0)));
   }
 
   /**
@@ -48,10 +46,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+  }
   
   private void initializeSubsystems() {
-   
+  
     if(RobotBase.isReal()) {
       m_driveTrain.setDefaultCommand(
        new SetArcadeDrive(m_driveTrain,
