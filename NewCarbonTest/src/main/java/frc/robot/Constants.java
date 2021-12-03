@@ -22,4 +22,29 @@ public final class Constants {
     public static int leftRearDriveMotor = 21; 
     public static int rightFrontDriveMotor = 22;
     public static int rightRearDriveMotor = 23;
+    public static int wristMotor = 40;
+    public static int climbMotor = 50;
+    public static int cargoIntakeMotor = 60;
+    public static int hatchIntakeMotor = 61;
+    
+    // DIOs
+    public static int bannerIR = 0;
+    public static int hatchSensor = 1;
+    public static int elevatorBottom = 2;
+    public static int elevatorTop = 3;
+    public static int elevatorMid = 4;
+    public static int wristBottom = 5;
+    public static int wristTop = 6;
+    public static int robotSwitch = 9;
+
+    //Cargo/Hatch Speed Values
+    public static double CARGO_INTAKE_SPEED = -0.7;
+    public static double CARGO_OUTTAKE_SPEED = 0.7;
+    public static double CARGO_HOLD_SPEED = -0.2;
+    public static double HATCH_INTAKE_SPEED = -0.8;
+    public static double HATCH_HOLD_SPEED = 0;
+    public static double HATCH_OUTTAKE_SPEED = 0.8;
+    public static double HATCH_GROUND_INTAKE_SPEED = -0.8;
+    public static double HATCH_GROUND_HOLD_SPEED = -0.1;
+    public static double HATCH_GROUND_OUTTAKE_SPEED = 1;
 }
