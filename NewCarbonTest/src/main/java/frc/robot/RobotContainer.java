@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.SetArcadeDrive;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Wrist;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -23,6 +25,8 @@ import frc.robot.subsystems.DriveTrain;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public static DriveTrain m_driveTrain = new DriveTrain();
+  public final static Intake intake = new Intake();
+  public static Wrist wrist = new Wrist();
   public static DoubleSupplier m_throttle;
   public static DoubleSupplier m_turn;
   Joystick leftJoystick = new Joystick(Constants.leftJoystick);
