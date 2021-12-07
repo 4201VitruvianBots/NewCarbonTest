@@ -77,27 +77,27 @@ public class Wrist{
         return !limitSwitches[limitSwitchIndex].get();
     }
 
-    /*public void zeroEncoder(int mode){
+    public void zeroEncoder(int mode){
         switch (mode) {
             case 2: 
-                for(getLimitSwitchState(0);;) {
-                    wristMotor.setSelectedSensorPosition(lowerLimitEncoderCounts, 0, 0);
-                    limitDebounce = true;
-                }
+                wristMotor.setSelectedSensorPosition(lowerLimitEncoderCounts, 0, 0);
+                limitDebounce = true;
+                    break;
             case 1:
-
-            break;
-
+                wristMotor.setSelectedSensorPosition(upperLimitEncoderCounts, 0, 0);
+                limitDebounce = true;
+                    break;
             case 0:
-
-            break;
+                limitDebounce = false;
+                    break;
 
             default:
-                 
-            break;
-    }}
-    */  
-    public void zeroEncoder() {
+                limitDebounce = false;
+                    break;
+        }
+    }
+    
+/*   public void zeroEncoder() {
         if(getLimitSwitchState(0)) {
             wristMotor.setSelectedSensorPosition(lowerLimitEncoderCounts, 0, 0);
             limitDebounce = true;
@@ -107,7 +107,7 @@ public class Wrist{
         } else
             limitDebounce = false;
     }
-
+*/
     public void setEncoderPosition(int position) {
         wristMotor.setSelectedSensorPosition(position, 0, 0);
     }
