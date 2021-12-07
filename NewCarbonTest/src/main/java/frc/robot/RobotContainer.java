@@ -49,8 +49,8 @@ public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
   private enum CommandSelector { 
-    TOAST_AUTO
-
+  TOAST_AUTO
+  
   }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -78,7 +78,7 @@ public void teleOpPeriodic() {
   private void initializeSubsystems() {
    
 
-    m_driveTrain.setDefaultCommand(new SetTankDrive(m_driveTrain, () -> leftJoystick.getRawAxis(NotFacts),
+    m_driveTrain.setDefaultCommand(new SetArcadeDrive(m_driveTrain, () -> leftJoystick.getRawAxis(NotFacts),
     () -> rightJoystick.getRawAxis(Facts)));
   }
 //how to change drive mode : For right joystick, change axis to 1
@@ -117,6 +117,6 @@ public void teleOpPeriodic() {
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
-   */
+   **/
 
 }

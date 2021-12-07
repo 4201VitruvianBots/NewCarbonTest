@@ -23,6 +23,8 @@ public final class Constants {
     public static int cargoIntakeMotor = 60;
     public static int hatchIntakeMotor = 61;
 
+
+    public static int wristMotor = 40;
     // DIOs
     public static int bannerIR = 0;
     public static int hatchSensor = 1;
@@ -94,4 +96,15 @@ public final class Constants {
                 LinearSystemId.identifyDrivetrainSystem(kvVoltSecondsPerMeter, kaVoltSecondsSquaredPerMeter,
                         kvVoltSecondsPerRadian, kaVoltSecondsSquaredPerRadian);
     }
+
+
+    public static double CARGO_INTAKE_SPEED = -0.7;
+    public static double CARGO_OUTTAKE_SPEED = 0.7;
+    public static double CARGO_HOLD_SPEED = -0.2;
+    public static double HATCH_INTAKE_SPEED = -0.8;
+    public static double HATCH_HOLD_SPEED = 0;
+    public static double HATCH_OUTTAKE_SPEED = 0.8;
+    public static double HATCH_GROUND_INTAKE_SPEED = -0.8;
+    public static double HATCH_GROUND_HOLD_SPEED = -0.1;
+    public static double HATCH_GROUND_OUTTAKE_SPEED = 1;
 }
