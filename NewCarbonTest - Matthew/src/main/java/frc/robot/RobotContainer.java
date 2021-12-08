@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.io.File;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -14,6 +16,10 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.SetArcadeDrive;
 import frc.robot.commands.SetTankDrive;
+import frc.robot.commands.intake.IntakeIntake;
+import frc.robot.commands.intake.SetIntakeState;
+import frc.robot.commands.wrist.ToggleWristState;
+import frc.robot.commands.wrist.ZeroWristEncoder;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
@@ -45,7 +51,7 @@ public class RobotContainer {
   
   public final Button[] leftButtons = new Button[2];
   public final static Button[] rightButtons = new Button[2];
-  public final Button[] xBoxButtons = new Button[10];
+  public final Button[] xBoxButtons = new Button[4];
   public final Button[] xBoxPOVButtons = new Button[8];
   
   public Button xBoxLeftTrigger, xBoxRightTrigger;
@@ -67,24 +73,24 @@ public class RobotContainer {
   }
 
   //use tank drive
-  public void initializeSubsystems() {
-    if(RobotBase.isReal()) {
-      m_driveTrain.setDefaultCommand(
-      new SetTankDrive(m_driveTrain,
-              () -> -leftJoystick.getRawAxis(1),
-              () -> rightJoystick.getRawAxis(1)));
-    }
-  }
-
-  //use arcade drive
   // public void initializeSubsystems() {
   //   if(RobotBase.isReal()) {
   //     m_driveTrain.setDefaultCommand(
-  //     new SetArcadeDrive(m_driveTrain,
+  //     new SetTankDrive(m_driveTrain,
   //             () -> -leftJoystick.getRawAxis(1),
   //             () -> rightJoystick.getRawAxis(1)));
   //   }
   // }
+
+  //use arcade drive
+  public void initializeSubsystems() {
+    if(RobotBase.isReal()) {
+      m_driveTrain.setDefaultCommand(
+      new SetArcadeDrive(m_driveTrain,
+              () -> -leftJoystick.getRawAxis(1),
+              () -> rightJoystick.getRawAxis(1)));
+    }
+  }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -107,6 +113,15 @@ public class RobotContainer {
       xBoxPOVButtons[i] = new POVButton(xBoxController, (i * 45));
     xBoxLeftTrigger = new XBoxTrigger(xBoxController, 2);
     xBoxRightTrigger = new XBoxTrigger(xBoxController, 3);
+
+    //Intake Buttons
+    xBoxButtons[4].whileHeld(new IntakeIntake());
+    xBoxRightTrigger.whenPressed(new SetIntakeState(2));
+    xBoxButtons[5].whenPressed(new SetIntakeState(0));
+
+    //Wrist Buttons
+    xBoxButtons[7].whenPressed(new ToggleWristState());
+    xBoxPOVButtons[0].whenPressed(new ZeroWristEncoder());
   }
 
   public static double getXBoxRightY(){
