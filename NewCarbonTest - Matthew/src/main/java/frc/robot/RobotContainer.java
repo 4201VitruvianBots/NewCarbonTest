@@ -66,6 +66,7 @@ public class RobotContainer {
     init = state;
   }
 
+  //use tank drive
   public void initializeSubsystems() {
     if(RobotBase.isReal()) {
       m_driveTrain.setDefaultCommand(
@@ -74,6 +75,16 @@ public class RobotContainer {
               () -> rightJoystick.getRawAxis(1)));
     }
   }
+
+  //use arcade drive
+  // public void initializeSubsystems() {
+  //   if(RobotBase.isReal()) {
+  //     m_driveTrain.setDefaultCommand(
+  //     new SetArcadeDrive(m_driveTrain,
+  //             () -> -leftJoystick.getRawAxis(1),
+  //             () -> rightJoystick.getRawAxis(1)));
+  //   }
+  // }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
