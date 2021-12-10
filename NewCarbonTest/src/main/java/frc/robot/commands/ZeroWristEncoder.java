@@ -11,39 +11,38 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Wrist;
 
-public class ManualWristUp extends CommandBase {
+public class ZeroWristEncoder extends CommandBase {
   /**
-   * Creates a new ManualWristUp.
+   * Creates a new ZeroWristEncoder.
    */
-  Wrist m_wrist;
-  public ManualWristUp(Wrist wrist) {
-    m_wrist = wrist;
-    addRequirements(wrist);
-    withTimeout(5);
+  public ZeroWristEncoder() {
+    // Use addRequirements() here to declare subsystem dependencies.
+    
+    addRequirements(RobotContainer.wrist);
+    //setRunWhenDisabled(true);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    RobotContainer.wrist.setEncoderPosition(Wrist.upperLimitEncoderCounts);
+    RobotContainer.wrist.setAbsolutePosition(RobotContainer.wrist.getAngle());
+    double calibrationValue = -RobotContainer.wrist.getPosition();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     m_wrist.setDirectOutput(0.4);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(m_wrist.getLimitSwitchState(1)) {
-      Wrist.controlMode = 1;
-  }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return /*isTimedOut() ||*/ m_wrist.getLimitSwitchState(1);
+    return false;
   }
 }

@@ -7,43 +7,47 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Wrist;
 
-public class ManualWristUp extends CommandBase {
+public class ToggleWristState extends CommandBase {
   /**
-   * Creates a new ManualWristUp.
+   * Creates a new ToggleWristState.
    */
-  Wrist m_wrist;
-  public ManualWristUp(Wrist wrist) {
-    m_wrist = wrist;
-    addRequirements(wrist);
-    withTimeout(5);
+  public ToggleWristState() {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.wrist);
+        withTimeout(0.2);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Scheduler.getInstance().removeAll();
+    if(Wrist.controlMode == 1)
+        Wrist.controlMode = 0;
+    else {
+        RobotContainer.wrist.setEncoderPosition(Wrist.upperLimitEncoderCounts);
+        Wrist.controlMode = 1;
+    }
+    RobotContainer.enableXBoxRumbleTimed(0.2);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     m_wrist.setDirectOutput(0.4);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(m_wrist.getLimitSwitchState(1)) {
-      Wrist.controlMode = 1;
-  }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return /*isTimedOut() ||*/ m_wrist.getLimitSwitchState(1);
+    return false;
   }
 }

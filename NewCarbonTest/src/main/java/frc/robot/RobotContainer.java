@@ -9,7 +9,10 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.Button;
+import frc.robot.commands.ManualWristUp;
 import frc.robot.commands.SetArcadeDrive;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
@@ -29,8 +32,20 @@ public class RobotContainer {
   public static Wrist wrist = new Wrist();
   public static DoubleSupplier m_throttle;
   public static DoubleSupplier m_turn;
-  Joystick leftJoystick = new Joystick(Constants.leftJoystick);
-  Joystick rightJoystick = new Joystick(Constants.rightJoystick);
+  static final Joystick leftJoystick = new Joystick(Constants.leftJoystick);
+  static final Joystick rightJoystick = new Joystick(Constants.rightJoystick);
+  static final Joystick xBoxController = new Joystick(Constants.xBoxController);
+  
+  static Joystick testContoller = new Joystick(4);
+  private static boolean init = false;
+  
+  public final Button[] leftButtons = new Button[2];
+  public final static Button[] rightButtons = new Button[2];
+  public final Button[] xBoxButtons = new Button[10];
+  public final Button[] xBoxPOVButtons = new Button[8];
+  
+  public Button xBoxLeftTrigger, xBoxRightTrigger;
+  public Button[] testButtons = new Button[10];
   
   // private final m_command = new ExampleCommand(m_exampleSubsystem);
   //
@@ -51,6 +66,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    xBoxButtons[0].whenPressed(new ManualWristUp(wrist));
   }
   
   private void initializeSubsystems() {
@@ -64,6 +80,23 @@ public class RobotContainer {
     }
   }
 
+  public static double getXBoxRightY(){
+    return -xBoxController.getRawAxis(5);
+  }
+  
+  public static void enableXBoxRumbleTimed(double duration){
+    Thread t = new Thread(() -> {
+      setXBoxRumble(0.8);
+      Timer.delay(duration);
+      setXBoxRumble(0);
+    });
+    t.start();
+  }
+
+  private static void setXBoxRumble(double value) {
+    xBoxController.setRumble(GenericHID.RumbleType.kLeftRumble, value);
+    xBoxController.setRumble(GenericHID.RumbleType.kRightRumble, value);
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

@@ -16,6 +16,7 @@ public final class Constants {
     // USB PORTS
     public static final int leftJoystick = 0;
     public static final int rightJoystick = 1;
+    public static final int xBoxController = 2;
 	public static int driveTrainShiftersForward = 0; 
     public static int driveTrainShiftersReverse = 1; 
     public static int pcm = 11;

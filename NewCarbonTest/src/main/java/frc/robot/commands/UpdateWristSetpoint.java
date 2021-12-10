@@ -11,15 +11,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Wrist;
 
-public class ManualWristUp extends CommandBase {
+public class UpdateWristSetpoint extends CommandBase {
   /**
-   * Creates a new ManualWristUp.
+   * Creates a new UpdateWristSetpoint.
    */
-  Wrist m_wrist;
-  public ManualWristUp(Wrist wrist) {
-    m_wrist = wrist;
-    addRequirements(wrist);
-    withTimeout(5);
+  public UpdateWristSetpoint() {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.wrist);
   }
 
   // Called when the command is initially scheduled.
@@ -30,20 +28,34 @@ public class ManualWristUp extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     m_wrist.setDirectOutput(0.4);
+    double joystickOutput = RobotContainer.getXBoxRightY();
+//TODO: Change to switch statement if possible
+    if (Wrist.controlMode == 1) {
+        if(Math.abs(joystickOutput) > 0.05) {
+            double setpoint = joystickOutput * 10;
+
+            // TODO: Change this logic to use limit switches when they are fixed
+            if(setpoint <= 0 && RobotContainer.wrist.getAngle() < 0.1 || setpoint >= 120  && RobotContainer.wrist.getAngle() > 119.9)
+                RobotContainer.enableXBoxRumbleTimed(0.2);
+
+            RobotContainer.wrist.setIncrementedPosition(setpoint);
+        }
+    } else {
+        if(Math.abs(joystickOutput) > 0.05)
+            RobotContainer.wrist.setDirectOutput (joystickOutput);
+        else
+            RobotContainer.wrist.setDirectOutput (0);
+        }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(m_wrist.getLimitSwitchState(1)) {
-      Wrist.controlMode = 1;
-  }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return /*isTimedOut() ||*/ m_wrist.getLimitSwitchState(1);
+    return false;
   }
 }

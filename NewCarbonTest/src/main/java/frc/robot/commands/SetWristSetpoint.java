@@ -11,39 +11,42 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Wrist;
 
-public class ManualWristUp extends CommandBase {
+
+public class SetWristSetpoint extends CommandBase {
   /**
-   * Creates a new ManualWristUp.
+   * Creates a new SetWristSetpoint.
    */
-  Wrist m_wrist;
-  public ManualWristUp(Wrist wrist) {
-    m_wrist = wrist;
-    addRequirements(wrist);
-    withTimeout(5);
+  // Use addRequirements() here to declare subsystem dependencies.
+    double setpoint;
+    public SetWristSetpoint(double angle) {
+      addRequirements(RobotContainer.wrist);
+      this.setpoint = angle;
+    }
+
+  public SetWristSetpoint() {
+    
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if(Wrist.controlMode == 1)
+    RobotContainer.wrist.setAbsolutePosition(setpoint);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     m_wrist.setDirectOutput(0.4);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(m_wrist.getLimitSwitchState(1)) {
-      Wrist.controlMode = 1;
-  }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return /*isTimedOut() ||*/ m_wrist.getLimitSwitchState(1);
+    return false;
   }
 }
